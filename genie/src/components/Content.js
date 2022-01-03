@@ -6,8 +6,15 @@ import {
   LinkOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
+import {firebaseConfig} from "../lib/base";
+import { initializeApp } from '@firebase/app';
+import {getAuth} from "firebase/auth";
 
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
 const { Search } = Input;
+
+
 const Content = () => {
   const [dataReady, setDataReady] = useState();
   const [res, setRes] = useState();

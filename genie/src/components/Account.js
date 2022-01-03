@@ -8,6 +8,13 @@ import {
   StarFilled,
   UserOutlined,
 } from "@ant-design/icons";
+import { browserLocalPersistence } from "firebase/auth";
+import {firebaseConfig} from "../lib/base";
+import { initializeApp } from '@firebase/app';
+import {getAuth} from "firebase/auth";
+
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
 
 const Account = () => {
   const columnsArtists = [
@@ -89,6 +96,15 @@ const Account = () => {
   const artistsResult = [];
   const songsResult = [];
 
+  const email = () => {
+    if(auth.currentUser){
+      return auth.currentUser.email;
+    }
+    else {
+      return "Pas d'utilisateur connecté";
+    }
+  }
+
   return (
     <div>
       <div
@@ -101,7 +117,7 @@ const Account = () => {
       >
         <Avatar size={64} icon={<UserOutlined />} />
         <h3>
-          <strong>Prénom Nom</strong>
+          <strong>{email()}</strong>
         </h3>
       </div>
       <h3><StarFilled /> Mes artistes préférés</h3>
