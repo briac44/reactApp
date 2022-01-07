@@ -8,7 +8,6 @@ import { useState } from "react";
 import Account from "./components/Account";
 
 const App = () => {
-  const [idSelect,setIdSelect] = useState('1');
   const [content,setContent] = useState(<Content/>)
 
   const handleChangeContent = (c) => {
@@ -20,7 +19,7 @@ const App = () => {
           <Menu.Item key="1" onClick={() => handleChangeContent(<Content/>)}>Rechercher</Menu.Item>
           <Menu.Item key="2" onClick={() => handleChangeContent(<Account/>)}>Mon compte</Menu.Item>
         </Menu>
-        <Layout.Content style={{ padding: '5% 10%' }}>
+        <Layout.Content style={{ padding: '40px 10%' }}>
           {content}
         </Layout.Content>
     </Layout>

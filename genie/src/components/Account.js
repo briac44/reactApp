@@ -3,26 +3,29 @@ import { useEffect, useState } from "react";
 import {
   CheckCircleTwoTone,
   CloseCircleTwoTone,
+  DeleteOutlined,
   LinkOutlined,
   SearchOutlined,
   StarFilled,
   UserOutlined,
 } from "@ant-design/icons";
+import {
+  arrayRemove,
+  doc,
+  getDoc,
+  getFirestore,
+  updateDoc,
+} from "@firebase/firestore";
+
+const db = getFirestore();
 
 const Account = () => {
   const columnsArtists = [
     {
       title: "Artiste",
-      dataIndex: "artist",
-      key: "artist",
-      render: (obj) => (
-        <a
-          href={"http://www.songsterr.com/a/wa/artist?id=" + obj.id}
-          target="_blank"
-        >
-          {obj.name}
-        </a>
-      ),
+      dataIndex: "name",
+      key: "name",
+      render: (obj) => <p>{obj}</p>,
     },
     {
       title: "Lien",
@@ -37,27 +40,37 @@ const Account = () => {
         </a>
       ),
     },
+    {
+      title: "Action",
+      dataIndex: "",
+      key: "",
+      render: (obj) => (
+        <Button danger onClick={() => handleDelFavoriteArtist(obj)}>
+          <DeleteOutlined style={{color:"red"}}/>
+        </Button>
+      ),
+    },
   ];
 
   const columnsSongs = [
     {
       title: "Titre",
-      dataIndex: "title",
-      key: "title",
-      render: (text) => <a href="/">{text}</a>,
+      dataIndex: "",
+      key: "",
+      render: (text) => (
+        <a
+          href={"http://www.songsterr.com/a/wa/song?id=" + text.id}
+          target="_blank"
+        >
+          {text.title}
+        </a>
+      ),
     },
     {
       title: "Artiste",
-      dataIndex: "artist",
-      key: "artist",
-      render: (obj) => (
-        <a
-          href={"http://www.songsterr.com/a/wa/artist?id=" + obj.id}
-          target="_blank"
-        >
-          {obj.name}
-        </a>
-      ),
+      dataIndex: "",
+      key: "",
+      render: (obj) => <a>{obj.artist}</a>,
     },
     {
       title: "Partition",
@@ -84,10 +97,69 @@ const Account = () => {
         </a>
       ),
     },
+    {
+      title: "Action",
+      dataIndex: "",
+      key: "",
+      render: (obj) => (
+        <Button danger onClick={() => handleDelFavoriteSong(obj)}>
+          <DeleteOutlined style={{color:"red"}}/>
+        </Button>
+      ),
+    },
   ];
 
-  const artistsResult = [];
-  const songsResult = [];
+  const [artistsResult, setArtistsResult] = useState();
+  const [songsResult, setSongsResults] = useState();
+  const [refresh, setRefresh] = useState(false);
+
+  useEffect(() => {
+    if (refresh) {
+      const docRef = doc(db, "users", "hrQvawIWDJJK6Q3VMGe0");
+      const docSnap = getDoc(docRef).then((doc) => {
+        console.log(doc.data());
+        setSongsResults(doc.data().favoriteSongs);
+        setArtistsResult(doc.data().favoriteArtist);
+      });
+      setRefresh(false);
+    }
+  }, [refresh]);
+
+  useEffect(() => {
+    const docRef = doc(db, "users", "hrQvawIWDJJK6Q3VMGe0");
+    const docSnap = getDoc(docRef).then((doc) => {
+      console.log(doc.data());
+      setSongsResults(doc.data().favoriteSongs);
+      setArtistsResult(doc.data().favoriteArtist);
+    });
+  }, []);
+
+  const handleDelFavoriteSong = (obj) => {
+    const delFavoriteSong = {
+      id: obj.id,
+      artist: obj.artist,
+      title: obj.title,
+    };
+    console.log("data artist", delFavoriteSong);
+    const userDoc = doc(db, "users", "hrQvawIWDJJK6Q3VMGe0");
+    updateDoc(userDoc, {
+      favoriteSongs: arrayRemove(delFavoriteSong),
+    });
+    setRefresh(true);
+  };
+
+  const handleDelFavoriteArtist = (obj) => {
+    const delFavoriteArtist = {
+      id: obj.id,
+      name: obj.name,
+    };
+    console.log("data artist", delFavoriteArtist);
+    const userDoc = doc(db, "users", "hrQvawIWDJJK6Q3VMGe0");
+    updateDoc(userDoc, {
+      favoriteArtist: arrayRemove(delFavoriteArtist),
+    });
+    setRefresh(true);
+  }
 
   return (
     <div>
@@ -104,10 +176,14 @@ const Account = () => {
           <strong>Prénom Nom</strong>
         </h3>
       </div>
-      <h3><StarFilled /> Mes artistes préférés</h3>
-      <Table columns={columnsArtists} dataSource={artistsResult} />
-      <h3><StarFilled /> Mes chansons préférées</h3>
+      <h3>
+        <StarFilled /> Mes chansons préférées
+      </h3>
       <Table columns={columnsSongs} dataSource={songsResult} />
+      <h3>
+        <StarFilled /> Mes artistes préférés
+      </h3>
+      <Table columns={columnsArtists} dataSource={artistsResult} />
     </div>
   );
 };
