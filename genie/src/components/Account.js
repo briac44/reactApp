@@ -17,6 +17,13 @@ import {
   updateDoc,
 } from "@firebase/firestore";
 
+import { browserLocalPersistence } from "firebase/auth";
+import { firebaseConfig } from "../lib/base";
+import { initializeApp } from "@firebase/app";
+import { getAuth } from "firebase/auth";
+
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
 const db = getFirestore();
 
 const Account = () => {
@@ -46,7 +53,7 @@ const Account = () => {
       key: "",
       render: (obj) => (
         <Button danger onClick={() => handleDelFavoriteArtist(obj)}>
-          <DeleteOutlined style={{color:"red"}}/>
+          <DeleteOutlined style={{ color: "red" }} />
         </Button>
       ),
     },
@@ -103,7 +110,7 @@ const Account = () => {
       key: "",
       render: (obj) => (
         <Button danger onClick={() => handleDelFavoriteSong(obj)}>
-          <DeleteOutlined style={{color:"red"}}/>
+          <DeleteOutlined style={{ color: "red" }} />
         </Button>
       ),
     },
@@ -115,7 +122,7 @@ const Account = () => {
 
   useEffect(() => {
     if (refresh) {
-      const docRef = doc(db, "users", "hrQvawIWDJJK6Q3VMGe0");
+      const docRef = doc(db, "users", auth.currentUser.uid);
       const docSnap = getDoc(docRef).then((doc) => {
         console.log(doc.data());
         setSongsResults(doc.data().favoriteSongs);
@@ -126,12 +133,17 @@ const Account = () => {
   }, [refresh]);
 
   useEffect(() => {
-    const docRef = doc(db, "users", "hrQvawIWDJJK6Q3VMGe0");
-    const docSnap = getDoc(docRef).then((doc) => {
-      console.log(doc.data());
-      setSongsResults(doc.data().favoriteSongs);
-      setArtistsResult(doc.data().favoriteArtist);
-    });
+    if (auth.currentUser) {
+      console.log(auth.currentUser.uid);
+      const docRef = doc(db, "users", auth.currentUser.uid);
+      const docSnap = getDoc(docRef).then((doc) => {
+        console.log(doc.data());
+        if (doc) {
+          setSongsResults(doc.data().favoriteSongs);
+          setArtistsResult(doc.data().favoriteArtist);
+        }
+      });
+    }
   }, []);
 
   const handleDelFavoriteSong = (obj) => {
@@ -141,7 +153,7 @@ const Account = () => {
       title: obj.title,
     };
     console.log("data artist", delFavoriteSong);
-    const userDoc = doc(db, "users", "hrQvawIWDJJK6Q3VMGe0");
+    const userDoc = doc(db, "users", auth.currentUser.uid);
     updateDoc(userDoc, {
       favoriteSongs: arrayRemove(delFavoriteSong),
     });
@@ -154,12 +166,20 @@ const Account = () => {
       name: obj.name,
     };
     console.log("data artist", delFavoriteArtist);
-    const userDoc = doc(db, "users", "hrQvawIWDJJK6Q3VMGe0");
+    const userDoc = doc(db, "users", auth.currentUser.uid);
     updateDoc(userDoc, {
       favoriteArtist: arrayRemove(delFavoriteArtist),
     });
     setRefresh(true);
-  }
+  };
+
+  const email = () => {
+    if (auth.currentUser) {
+      return auth.currentUser.email;
+    } else {
+      return "Pas d'utilisateur connecté";
+    }
+  };
 
   return (
     <div>
@@ -173,7 +193,7 @@ const Account = () => {
       >
         <Avatar size={64} icon={<UserOutlined />} />
         <h3>
-          <strong>Prénom Nom</strong>
+          <strong>{email()}</strong>
         </h3>
       </div>
       <h3>

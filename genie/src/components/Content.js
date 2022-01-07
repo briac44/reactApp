@@ -12,10 +12,12 @@ import { firebaseConfig } from "../lib/base.js";
 import { initializeApp } from "firebase/app";
 import { collection, addDoc } from "firebase/firestore";
 import { arrayUnion, doc, getFirestore, updateDoc } from "@firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore();
 
+const auth = getAuth(firebaseApp);
 const { Search } = Input;
 
 const Content = () => {
@@ -98,7 +100,7 @@ const Content = () => {
       id: obj.id,
       name: obj.name,
     };
-    const userDoc = doc(db, "users", "hrQvawIWDJJK6Q3VMGe0");
+    const userDoc = doc(db, "users", auth.currentUser.uid);
     updateDoc(userDoc, {
       favoriteArtist: arrayUnion(newFavoriteArtist),
     });
@@ -110,7 +112,7 @@ const Content = () => {
       artist: obj.artist.name,
       title: obj.title,
     };
-    const userDoc = doc(db, "users", "hrQvawIWDJJK6Q3VMGe0");
+    const userDoc = doc(db, "users", auth.currentUser.uid);
     updateDoc(userDoc, {
       favoriteSongs: arrayUnion(newFavoriteSong),
     });
