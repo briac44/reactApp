@@ -20,6 +20,7 @@ const Login = (props) => {
     signInWithEmailAndPassword(auth, values.email, values.password)
       .then((credentials) => {
           message.info("Bienvenue " + credentials.user.email);
+          
         props.setContent(<Content />);
       })
       .catch((err) => {
