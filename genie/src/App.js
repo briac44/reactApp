@@ -10,6 +10,7 @@ import Login from "./components/Login";
 import {getAuth} from "firebase/auth";
 import {firebaseConfig} from "./lib/base";
 import { initializeApp } from '@firebase/app';
+import Register from "./components/Register";
 
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
@@ -33,7 +34,10 @@ const App = () => {
       return (<Menu.Item key="3" style={{float: "right"}} onClick={() => deconnexion()}>Se déconnecter</Menu.Item>);
     }
     else {
-      return (<Menu.Item key="3" style={{float: "right"}} onClick={() => handleChangeContent(<Login setContent={setContent}/>)}>Se connecter</Menu.Item>)
+      return (<>
+      <Menu.Item key="3" style={{float: "right"}} onClick={() => handleChangeContent(<Login setContent={setContent}/>)}>Se connecter</Menu.Item>
+      </>
+      )
     }
   }
 
