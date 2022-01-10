@@ -1,11 +1,10 @@
-import { Table, Tag, Space, Button, Input, Spin, Avatar } from "antd";
+import { Table, Button, Avatar } from "antd";
 import { useEffect, useState } from "react";
 import {
   CheckCircleTwoTone,
   CloseCircleTwoTone,
   DeleteOutlined,
   LinkOutlined,
-  SearchOutlined,
   StarFilled,
   UserOutlined,
 } from "@ant-design/icons";
@@ -17,7 +16,6 @@ import {
   updateDoc,
 } from "@firebase/firestore";
 
-import { browserLocalPersistence } from "firebase/auth";
 import { firebaseConfig } from "../lib/base";
 import { initializeApp } from "@firebase/app";
 import { getAuth } from "firebase/auth";
@@ -77,7 +75,7 @@ const Account = () => {
       title: "Artiste",
       dataIndex: "",
       key: "",
-      render: (obj) => <a>{obj.artist}</a>,
+      render: (obj) => <p>{obj.artist}</p>,
     },
     {
       title: "Partition",

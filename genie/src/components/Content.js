@@ -10,7 +10,6 @@ import {
 } from "@ant-design/icons";
 import { firebaseConfig } from "../lib/base.js";
 import { initializeApp } from "firebase/app";
-import { collection, addDoc } from "firebase/firestore";
 import { arrayUnion, doc, getFirestore, updateDoc } from "@firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -23,7 +22,6 @@ const { Search } = Input;
 const Content = () => {
   const [dataReady, setDataReady] = useState();
   const [res, setRes] = useState();
-  const [idDoc, setIdDoc] = useState();
 
   useEffect(() => {
     console.log("re-display");
@@ -86,7 +84,7 @@ const Content = () => {
     {
       title: "Ajouter aux favoris",
       dataIndex: "",
-      key: "",
+      key: "action",
       render: (obj) => (
         <Button onClick={() => handleAddFavoriteSong(obj)}>
           <PlusOutlined />
@@ -96,27 +94,36 @@ const Content = () => {
   ];
 
   const handleAddFavoriteArtist = (obj) => {
-    const newFavoriteArtist = {
-      id: obj.id,
-      name: obj.name,
-    };
-    const userDoc = doc(db, "users", auth.currentUser.uid);
-    updateDoc(userDoc, {
-      favoriteArtist: arrayUnion(newFavoriteArtist),
-    });
-    message.success(obj.name + " ajouté aux favoris", 3);
+    if (getAuth.currentUser) {
+      const newFavoriteArtist = {
+        id: obj.id,
+        name: obj.name,
+      };
+      const userDoc = doc(db, "users", auth.currentUser.uid);
+      updateDoc(userDoc, {
+        favoriteArtist: arrayUnion(newFavoriteArtist),
+      });
+      message.success(obj.name + " ajouté aux favoris", 3);
+    } else {
+      message.error("Vous n'êtes pas connecté !");
+    }
   };
+
   const handleAddFavoriteSong = (obj) => {
-    const newFavoriteSong = {
-      id: obj.id,
-      artist: obj.artist.name,
-      title: obj.title,
-    };
-    const userDoc = doc(db, "users", auth.currentUser.uid);
-    updateDoc(userDoc, {
-      favoriteSongs: arrayUnion(newFavoriteSong),
-    });
-    message.success(obj.title + " ajouté aux favoris", 3);
+    if (getAuth.currentUser) {
+      const newFavoriteSong = {
+        id: obj.id,
+        artist: obj.artist.name,
+        title: obj.title,
+      };
+      const userDoc = doc(db, "users", auth.currentUser.uid);
+      updateDoc(userDoc, {
+        favoriteSongs: arrayUnion(newFavoriteSong),
+      });
+      message.success(obj.title + " ajouté aux favoris", 3);
+    } else {
+      message.error("Vous n'êtes pas connecté !");
+    }
   };
 
   const handleSearch = (props) => {
@@ -139,7 +146,9 @@ const Content = () => {
   const result = () => {
     if (res) {
       if (res.length > 1) {
-        return <div style={{ padding: "15px 5px" }}>{res.length} résultats</div>;
+        return (
+          <div style={{ padding: "15px 5px" }}>{res.length} résultats</div>
+        );
       } else {
         return <div style={{ padding: "15px 5px" }}>{res.length} résultat</div>;
       }
@@ -149,7 +158,13 @@ const Content = () => {
   };
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "row",alignItems:"flex-end" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "flex-end",
+        }}
+      >
         <div>
           <h1>Rechercher</h1>
           <Search
