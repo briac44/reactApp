@@ -41,7 +41,7 @@ const Content = () => {
       render: (obj) => (
         <>
           <a
-            href={"http://www.songsterr.com/a/wa/artist?id=" + obj.id}
+            href={"https://www.songsterr.com/a/wa/artist?id=" + obj.id}
             target="_blank"
           >
             {obj.name}
@@ -74,7 +74,7 @@ const Content = () => {
       key: "id",
       render: (obj) => (
         <a
-          href={"http://www.songsterr.com/a/wa/song?id=" + obj}
+          href={"https://www.songsterr.com/a/wa/song?id=" + obj}
           target="_blank"
         >
           <LinkOutlined />
@@ -94,12 +94,14 @@ const Content = () => {
   ];
 
   const handleAddFavoriteArtist = (obj) => {
-    if (getAuth.currentUser) {
+    console.log("UID" + auth.currentUser.uid)
+    if (auth.currentUser) {
       const newFavoriteArtist = {
         id: obj.id,
         name: obj.name,
       };
       const userDoc = doc(db, "users", auth.currentUser.uid);
+      console.log("UID" + auth.currentUser.uid)
       updateDoc(userDoc, {
         favoriteArtist: arrayUnion(newFavoriteArtist),
       });
@@ -110,13 +112,14 @@ const Content = () => {
   };
 
   const handleAddFavoriteSong = (obj) => {
-    if (getAuth.currentUser) {
+    if (auth.currentUser) {
       const newFavoriteSong = {
         id: obj.id,
         artist: obj.artist.name,
         title: obj.title,
       };
       const userDoc = doc(db, "users", auth.currentUser.uid);
+      console.log("UID" + auth.currentUser.uid)
       updateDoc(userDoc, {
         favoriteSongs: arrayUnion(newFavoriteSong),
       });
@@ -129,13 +132,13 @@ const Content = () => {
   const handleSearch = (props) => {
     setDataReady(<Spin />);
     console.log(props);
-    fetch("http://www.songsterr.com/a/ra/songs.json?pattern=" + props).then(
+    fetch("https://www.songsterr.com/a/ra/songs.json?pattern=" + props).then(
       (response) => {
         response
           .clone()
           .json()
           .then((dat) => {
-            console.log(dat);
+            console.log(dat + "V2");
             setRes(dat);
           });
       }

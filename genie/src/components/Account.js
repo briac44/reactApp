@@ -38,7 +38,7 @@ const Account = () => {
       key: "id",
       render: (obj) => (
         <a
-          href={"http://www.songsterr.com/a/wa/song?id=" + obj}
+          href={"https://www.songsterr.com/a/wa/song?id=" + obj}
           target="_blank"
         >
           <LinkOutlined />
@@ -64,7 +64,7 @@ const Account = () => {
       key: "",
       render: (text) => (
         <a
-          href={"http://www.songsterr.com/a/wa/song?id=" + text.id}
+          href={"https://www.songsterr.com/a/wa/song?id=" + text.id}
           target="_blank"
         >
           {text.title}
@@ -95,7 +95,7 @@ const Account = () => {
       key: "id",
       render: (obj) => (
         <a
-          href={"http://www.songsterr.com/a/wa/song?id=" + obj}
+          href={"https://www.songsterr.com/a/wa/song?id=" + obj}
           target="_blank"
         >
           <LinkOutlined />

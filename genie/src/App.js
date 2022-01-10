@@ -31,7 +31,10 @@ const App = () => {
       return (<Menu.Item key="3" style={{float: "right"}} onClick={() => deconnexion()}>Se déconnecter</Menu.Item>);
     }
     else {
-      return (<Menu.Item key="3" style={{float: "right"}} onClick={() => handleChangeContent(<Login setContent={setContent}/>)}>Se connecter</Menu.Item>)
+      return (<>
+      <Menu.Item key="3" style={{float: "right"}} onClick={() => handleChangeContent(<Login setContent={setContent}/>)}>Se connecter</Menu.Item>
+      </>
+      )
     }
   }
 
