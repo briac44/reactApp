@@ -25,6 +25,9 @@ const auth = getAuth(firebaseApp);
 const db = getFirestore();
 
 const Account = () => {
+
+  const [isLoading,setLoading] = useState(false);
+
   const columnsArtists = [
     {
       title: "Artiste",
@@ -120,6 +123,7 @@ const Account = () => {
 
   useEffect(() => {
     if (refresh) {
+      setLoading(true);
       const docRef = doc(db, "users", auth.currentUser.uid);
       const docSnap = getDoc(docRef).then((doc) => {
         console.log(doc.data());
@@ -127,11 +131,13 @@ const Account = () => {
         setArtistsResult(doc.data().favoriteArtist);
       });
       setRefresh(false);
+      setLoading(false);
     }
   }, [refresh]);
 
   useEffect(() => {
     if (auth.currentUser) {
+      setLoading(true);
       console.log(auth.currentUser.uid);
       const docRef = doc(db, "users", auth.currentUser.uid);
       const docSnap = getDoc(docRef).then((doc) => {
@@ -142,6 +148,7 @@ const Account = () => {
         }
       });
     }
+    setLoading(false);
   }, []);
 
   const handleDelFavoriteSong = (obj) => {
@@ -197,11 +204,11 @@ const Account = () => {
       <h3>
         <StarFilled /> Mes chansons préférées
       </h3>
-      <Table columns={columnsSongs} dataSource={songsResult} />
+      <Table columns={columnsSongs} dataSource={songsResult} loading={isLoading}/>
       <h3>
         <StarFilled /> Mes artistes préférés
       </h3>
-      <Table columns={columnsArtists} dataSource={artistsResult} />
+      <Table columns={columnsArtists} dataSource={artistsResult} loading={isLoading} />
     </div>
   );
 };

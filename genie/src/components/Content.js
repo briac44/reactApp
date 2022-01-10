@@ -22,10 +22,12 @@ const { Search } = Input;
 const Content = () => {
   const [dataReady, setDataReady] = useState();
   const [res, setRes] = useState();
+  const [isLoading,setLoading] = useState(false);
 
   useEffect(() => {
     console.log("re-display");
-  }, [dataReady]);
+    setLoading(false);
+  }, [res]);
 
   const columns = [
     {
@@ -94,7 +96,6 @@ const Content = () => {
   ];
 
   const handleAddFavoriteArtist = (obj) => {
-    console.log("UID" + auth.currentUser.uid)
     if (auth.currentUser) {
       const newFavoriteArtist = {
         id: obj.id,
@@ -122,6 +123,7 @@ const Content = () => {
       console.log("UID" + auth.currentUser.uid)
       updateDoc(userDoc, {
         favoriteSongs: arrayUnion(newFavoriteSong),
+        
       });
       message.success(obj.title + " ajouté aux favoris", 3);
     } else {
@@ -130,7 +132,7 @@ const Content = () => {
   };
 
   const handleSearch = (props) => {
-    setDataReady(<Spin />);
+    setLoading(true);
     console.log(props);
     fetch("https://www.songsterr.com/a/ra/songs.json?pattern=" + props).then(
       (response) => {
@@ -143,7 +145,6 @@ const Content = () => {
           });
       }
     );
-    setDataReady(<SearchOutlined />);
   };
 
   const result = () => {
@@ -179,7 +180,7 @@ const Content = () => {
         </div>
         {result()}
       </div>
-      <Table columns={columns} dataSource={res} />
+      <Table columns={columns} dataSource={res} loading={isLoading}/>
     </>
   );
 };
