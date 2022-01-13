@@ -36,6 +36,7 @@ const Login = (props) => {
             favoriteSongs: [],
             idUser: rsp.user.uid
         });
+        message.success("Inscription effectuée avec succès ");
         props.setContent(<Content/>); 
       })
       .catch((err) => {
